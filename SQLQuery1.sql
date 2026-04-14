@@ -50,3 +50,23 @@ order by ProfitPerMonth desc
 --So August was the most Profitable and December is the least Profitable 
 
 --7. Revenue Impact of Delays
+Select Is_Delayed , sum(TotalAmount) as  TotalAmount 
+from supply_chain_data
+group by Is_Delayed
+--The revenue is very less when there are delays as compair to without delay
+
+--Best Performing State
+
+Select top 5  [Customer State] , Avg(TotalAmount) as Total
+from supply_chain_data
+group by [Customer State]
+order by Total desc 
+
+
+--Worst Performing Region
+
+Select top 5  [Customer State] , Avg(TotalAmount) as Total
+from supply_chain_data
+group by [Customer State]
+order by Total  
+
