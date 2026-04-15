@@ -55,7 +55,7 @@ from supply_chain_data
 group by Is_Delayed
 --The revenue is very less when there are delays as compair to without delay
 
---Best Performing State
+-- 8 Best Performing State
 
 Select top 5  [Customer State] , Avg(TotalAmount) as Total
 from supply_chain_data
@@ -63,10 +63,52 @@ group by [Customer State]
 order by Total desc 
 
 
---Worst Performing Region
+--9 Worst Performing Region
 
 Select top 5  [Customer State] , Avg(TotalAmount) as Total
 from supply_chain_data
 group by [Customer State]
 order by Total  
+
+--10. Which Regions Cause Maximum Delays?
+
+Select [Order State] , count(*) as TotalOrders,
+       Sum(Delivery_Time) as AvgDeliveryTimePerState
+from supply_chain_data
+where is_Delayed = 1 
+group by [Order State]
+Order by 3 desc 
+
+--11. Which Months Have Worst Performance?
+
+Select top 3 datename(month,Order_Date) as Month, 
+       sum(TotalAmount) as TotalRevinue , 
+       count(*) as TotalOrders
+from supply_chain_data
+group by datename(month,Order_Date)
+order by TotalRevinue
+
+--12. Customer Segment Impact
+
+Select [Customer Segment],
+       SUM([TotalAmount]) as TotalInThatSegment,
+       Avg(Delivery_Time) as AvgDeliverytime 
+from supply_chain_data
+where Is_Delayed = 1
+GROUP by  [Customer Segment]
+order by AvgDeliverytime
+
+--13. Delay Rate by Country
+
+SELECT [Customer Country],
+       COUNT(*) AS Total,
+       Sum(delivery_Time) as DelayTime
+FROM supply_chain_data
+GROUP BY [Customer Country]
+ORDER BY DelayTime DESC;
+
+--14. Delay Rate
+SELECT 
+    COUNT(CASE WHEN Is_Delayed = 1 THEN 1 END) * 100.0 / COUNT(*) AS Delay_Percentage
+FROM supply_chain_data;
 
