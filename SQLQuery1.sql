@@ -1,7 +1,7 @@
 CREATE DATABASE SupplyChainDB;
 use SupplyChainDB
 
-
+Select top 10 [Product Card Id] from supply_chain_data
 --1.Average DeliveryTime 
 Select AVG(Delivery_Time) as AverageTimeToDeliver 
 from DBO.supply_chain_data  -- So Average DeliveryTime is of 3
