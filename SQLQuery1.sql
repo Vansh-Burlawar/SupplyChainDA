@@ -34,20 +34,24 @@ ORDER BY Avg_Time desc;
 
 --5.Top Products Causing Delays
 
-Select [Product Name] , MAX(Delivery_Time) as MaxDelivery_Time 
+Select  Top 10 [Product Name] ,
+               Count(*) as DelaysCount
 from supply_chain_data
 GROUP BY [Product Name]
-Order by MaxDelivery_Time DESC;
+Order by DelaysCount DESC;
 --All this 117 product causes most delays 
 
 --6.Monthly Trend Analysis
+SELECT 
+    DATENAME(MONTH, Order_Date) AS Month,
+    AVG(Delivery_Time) AS Avg_Time,
+    COUNT(CASE WHEN Is_Delayed = 1 THEN 1 END) AS Delays
+FROM supply_chain_data
+GROUP BY DATENAME(MONTH, Order_Date), MONTH(Order_Date)
+ORDER BY MONTH(Order_Date);
 
-Select Month(Shipping_Date) as MonthName ,
-       Sum([Order Profit Per Order]) as ProfitPerMonth
-from supply_chain_data
-group by Month(Shipping_Date)
-order by ProfitPerMonth desc
---So August was the most Profitable and December is the least Profitable 
+
+--So Delays in January is high and in december is least 
 
 --7. Revenue Impact of Delays
 Select Is_Delayed , sum(TotalAmount) as  TotalAmount 
@@ -65,15 +69,15 @@ order by Total desc
 
 --9 Worst Performing Region
 
-Select top 5  [Customer State] , Avg(TotalAmount) as Total
+Select top 5  [Customer State] , Avg(Delivery_Time) as Average
 from supply_chain_data
 group by [Customer State]
-order by Total  
+order by Average Desc 
 
 --10. Which Regions Cause Maximum Delays?
 
 Select [Order State] , count(*) as TotalOrders,
-       Sum(Delivery_Time) as AvgDeliveryTimePerState
+       Sum(Delivery_Time) as TotalDeliveryTimePerState
 from supply_chain_data
 where is_Delayed = 1 
 group by [Order State]
@@ -102,10 +106,10 @@ order by AvgDeliverytime
 
 SELECT [Customer Country],
        COUNT(*) AS Total,
-       Sum(delivery_Time) as DelayTime
+       COUNT(CASE WHEN Is_Delayed = 1 THEN 1 END) * 100.0 / COUNT(*) AS Delay_Percentage
 FROM supply_chain_data
 GROUP BY [Customer Country]
-ORDER BY DelayTime DESC;
+ORDER BY Delay_Percentage DESC;
 
 --14. Delay Rate
 SELECT 
