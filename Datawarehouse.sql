@@ -60,23 +60,23 @@ Create Table dim_date (Date date Primary key,
                        Month_Name varchar(300),
                        Year int,
                        quarter int,
-                       Weekday_Name varchar(300),)
+                       Weekday_Name varchar(300))
 
-insert into dim_date
-select distinct d.date,day(d.DATE) AS Day,
-                MONTH(d.DATE) AS Month,
-                DATENAME(month,d.date) as Month_Name,
-                year(d.date) as Year,
-                DATEPART(QUARTER,d.DATE) as Quarter,
-                Datename(weekday,d.date) as Weekday_Name
-from (Select [Order_Date] as Date from Supply_chain_data
-      union 
-      Select [Shipping_date] from supply_chain_data
-      )d
+
+INSERT INTO dim_date
+SELECT 
+    d.Date,
+    DAY(d.Date),
+    MONTH(d.Date),
+    DATENAME(MONTH, d.Date),
+    YEAR(d.Date),
+    DATEPART(QUARTER, d.Date),
+    DATENAME(WEEKDAY, d.Date)
+FROM (
+    SELECT CAST(Order_Date AS DATE) AS Date FROM supply_chain_data
+    UNION ALL
+    SELECT CAST(Shipping_Date AS DATE) FROM supply_chain_data
+) d
 WHERE d.Date IS NOT NULL
-AND d.Date NOT IN (SELECT Date FROM dim_date);
-
-''' Facing Error to insert the data '''
-
-            
+GROUP BY d.Date;
 
